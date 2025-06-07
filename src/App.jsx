@@ -27,8 +27,12 @@ function App() {
 
   useEffect(() => {
     // In a real app, fetch from API: /api/cities?name=<query>
-    const data = placeholderData[query];
-    setCityData(data || null);
+    const normalized = query.trim().toLowerCase();
+    const match = Object.keys(placeholderData).find(
+      key => key.toLowerCase() === normalized
+    );
+    const data = match ? placeholderData[match] : null;
+    setCityData(data);
   }, [query]);
 
   return (
