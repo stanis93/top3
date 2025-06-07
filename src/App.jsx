@@ -75,6 +75,11 @@ const categories = {
 function App() {
   const [city, setCity] = useState('');
   const [category, setCategory] = useState('');
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const cities = Object.keys(placeholderData);
+  const filteredCities = cities.filter(
+    name => name.toLowerCase().includes(city.toLowerCase()) && name !== city
+  );
   const [cityData, setCityData] = useState(null);
   const sectionRef = useRef(null);
 
@@ -97,16 +102,36 @@ function App() {
       </header>
 
       <div className="flex flex-col items-center w-full space-y-4 mb-8">
-        <select
-          value={city}
-          onChange={e => setCity(e.target.value)}
-          className="w-full max-w-xs px-4 py-2 border-2 border-gray-300 rounded-full shadow focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all duration-300"
-        >
-          <option value="">Select a city...</option>
-          {Object.keys(placeholderData).map(name => (
-            <option key={name} value={name}>{name}</option>
-          ))}
-        </select>
+        <div className="relative w-full max-w-lg">
+          <input
+            type="text"
+            value={city}
+            onChange={e => {
+              setCity(e.target.value);
+              setShowSuggestions(true);
+            }}
+            onFocus={() => setShowSuggestions(true)}
+            onBlur={() => setTimeout(() => setShowSuggestions(false), 100)}
+            placeholder="Search a city..."
+            className="w-full px-4 py-2 border-2 border-gray-300 rounded-full shadow focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all duration-300"
+          />
+          {showSuggestions && filteredCities.length > 0 && (
+            <ul className="absolute left-0 right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-10">
+              {filteredCities.map(name => (
+                <li
+                  key={name}
+                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                  onMouseDown={() => {
+                    setCity(name);
+                    setShowSuggestions(false);
+                  }}
+                >
+                  {name}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
         {city && (
           <select
             value={category}
