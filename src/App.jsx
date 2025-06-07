@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 // Placeholder data structure for demonstration
 const placeholderData = {
@@ -73,68 +73,63 @@ const categories = {
 };
 
 function App() {
-  const [query, setQuery] = useState('Cetinje');
+  const [city, setCity] = useState('');
+  const [category, setCategory] = useState('');
   const [cityData, setCityData] = useState(null);
-  const [category, setCategory] = useState('streetFood');
+  const sectionRef = useRef(null);
 
   useEffect(() => {
-    // In a real app, fetch from API: /api/cities?name=<query>
-    const normalized = query.trim().toLowerCase();
-    const match = Object.keys(placeholderData).find(
-      key => key.toLowerCase() === normalized
-    );
-    const data = match ? placeholderData[match] : null;
+    if (!city) {
+      setCityData(null);
+      return;
+    }
+    const data = placeholderData[city] || null;
     setCityData(data);
-  }, [query]);
+  }, [city]);
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-8">
-      <header className="text-center mb-8 w-full flex flex-col items-center">
-        <h1 className="text-4xl font-bold mb-4">Choose Local Over Tourist Traps</h1>
-        <div className="relative mx-auto w-full max-w-xl mb-4">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1116.65 16.65z"
-            />
-          </svg>
-          <input
-            type="text"
-            placeholder="Search for a city..."
-            value={query}
-            onChange={e => setQuery(e.target.value)}
-            className="w-full px-4 py-3 pl-10 border-2 border-gray-300 rounded-full shadow focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all duration-300"
-          />
-        </div>
-        <div className="w-full max-w-xs">
-          <select
-            value={category}
-            onChange={e => setCategory(e.target.value)}
-            className="w-full px-4 py-2 border-2 border-gray-300 rounded-full shadow focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all duration-300"
-          >
-            {Object.entries(categories).map(([key, { label }]) => (
-              <option key={key} value={key}>
-                {label}
-              </option>
-            ))}
-          </select>
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center p-8">
+      <header className="mb-8 w-full flex justify-center">
+        <div className="flex items-center space-x-2">
+          <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-lg font-bold">Top 3</span>
+          <h1 className="text-3xl font-bold">Choose local by locals</h1>
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto w-full">
-        {cityData ? (
-          <CategorySection title={categories[category].title} items={cityData[category]} />
-        ) : (
-          <p className="text-center text-gray-500">No data found for "{query}".</p>
+      <div className="flex flex-col items-center w-full space-y-4 mb-8">
+        <select
+          value={city}
+          onChange={e => setCity(e.target.value)}
+          className="w-full max-w-xs px-4 py-2 border-2 border-gray-300 rounded-full shadow focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all duration-300"
+        >
+          <option value="">Select a city...</option>
+          {Object.keys(placeholderData).map(name => (
+            <option key={name} value={name}>{name}</option>
+          ))}
+        </select>
+        {city && (
+          <select
+            value={category}
+            onChange={e => {
+              setCategory(e.target.value);
+              sectionRef.current?.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="w-full max-w-xs px-4 py-2 border-2 border-gray-300 rounded-full shadow focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all duration-300"
+          >
+            <option value="">Select a category...</option>
+            {Object.entries(categories).map(([key, { label }]) => (
+              <option key={key} value={key}>{label}</option>
+            ))}
+          </select>
         )}
+      </div>
+
+      <main ref={sectionRef} className="max-w-4xl mx-auto w-full">
+        {cityData && category ? (
+          <CategorySection title={categories[category].title} items={cityData[category]} />
+        ) : city ? (
+          <p className="text-center text-gray-500">Please choose a category.</p>
+        ) : null}
       </main>
     </div>
   );
