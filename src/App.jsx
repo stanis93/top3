@@ -4,19 +4,64 @@ import React, { useState, useEffect } from 'react';
 const placeholderData = {
   Cetinje: {
     streetFood: [
-      { name: 'Burek', description: 'Flaky phyllo pastry with meat, cheese or spinach.' },
-      { name: 'Njeguški pršut & Cheese', description: 'Smoked ham and cheese slices from local producers.' },
-      { name: 'Ćevapi', description: 'Grilled minced-meat sausages served with flatbread.' }
+      {
+        name: 'Burek',
+        description: 'Flaky phyllo pastry with meat, cheese or spinach.',
+        where: 'Bakeries around the city centre',
+        image: 'https://via.placeholder.com/300x200?text=Burek'
+      },
+      {
+        name: 'Njeguški pršut & Cheese',
+        description: 'Smoked ham and cheese slices from local producers.',
+        where: 'Local markets and deli shops',
+        image: 'https://via.placeholder.com/300x200?text=Prsut'
+      },
+      {
+        name: 'Ćevapi',
+        description: 'Grilled minced-meat sausages served with flatbread.',
+        where: 'Street vendors in the main square',
+        image: 'https://via.placeholder.com/300x200?text=Cevapi'
+      }
     ],
     restaurants: [
-      { name: 'Restaurant Kole', description: 'Traditional Montenegrin dishes in generous portions.' },
-      { name: 'Gradska Kafana', description: 'Modern twists on local classics.' },
-      { name: 'Belveder Nacionalni Restoran', description: 'Authentic cuisine with panoramic views.' }
+      {
+        name: 'Restaurant Kole',
+        description: 'Traditional Montenegrin dishes in generous portions.',
+        where: '11 Njegoševa',
+        image: 'https://via.placeholder.com/300x200?text=Kole'
+      },
+      {
+        name: 'Gradska Kafana',
+        description: 'Modern twists on local classics.',
+        where: 'Main pedestrian street',
+        image: 'https://via.placeholder.com/300x200?text=Gradska'
+      },
+      {
+        name: 'Belveder Nacionalni Restoran',
+        description: 'Authentic cuisine with panoramic views.',
+        where: 'Belveder hill',
+        image: 'https://via.placeholder.com/300x200?text=Belveder'
+      }
     ],
     attractions: [
-      { name: 'Lipa Cave', description: 'Underground cave system with dramatic stalactites.' },
-      { name: 'Cetinje Green Market', description: 'Weekly farmer market with fresh local produce.' },
-      { name: 'Blue Palace', description: 'Presidential residence with quiet gardens.' }
+      {
+        name: 'Lipa Cave',
+        description: 'Underground cave system with dramatic stalactites.',
+        where: 'Lipa Dobrska',
+        image: 'https://via.placeholder.com/300x200?text=Lipa+Cave'
+      },
+      {
+        name: 'Cetinje Green Market',
+        description: 'Weekly farmer market with fresh local produce.',
+        where: 'Central market square',
+        image: 'https://via.placeholder.com/300x200?text=Market'
+      },
+      {
+        name: 'Blue Palace',
+        description: 'Presidential residence with quiet gardens.',
+        where: 'Cetinje centre',
+        image: 'https://via.placeholder.com/300x200?text=Blue+Palace'
+      }
     ]
   }
 };
@@ -95,21 +140,53 @@ function App() {
   );
 }
 
+function ResultCard({ item }) {
+  return (
+    <div className="bg-white w-80 p-6 rounded-lg shadow-lg animate-fadeIn">
+      <img
+        src={item.image}
+        alt={item.name}
+        className="w-full h-48 object-cover rounded-md mb-4"
+      />
+      <h3 className="font-bold text-xl mb-2">{item.name}</h3>
+      <p className="text-gray-600 mb-2">{item.description}</p>
+      <p className="text-sm text-gray-500 mb-4">Where to see: {item.where}</p>
+      <div className="flex justify-center space-x-4">
+        <button className="text-2xl hover:scale-110 transition-transform">👍</button>
+        <button className="text-2xl hover:scale-110 transition-transform">👎</button>
+      </div>
+    </div>
+  );
+}
+
 function CategorySection({ title, items }) {
+  const [index, setIndex] = useState(0);
+
+  const prev = () => setIndex((index - 1 + items.length) % items.length);
+  const next = () => setIndex((index + 1) % items.length);
+
+  const item = items[index];
+
   return (
     <section className="mb-8">
-      <h2 className="text-2xl font-semibold mb-4">{title}</h2>
-      <ul className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {items.map(item => (
-          <li
-            key={item.name}
-            className="bg-white p-4 rounded shadow transition transform duration-300 hover:scale-105 hover:shadow-lg animate-fadeIn"
-          >
-            <h3 className="font-bold text-lg">{item.name}</h3>
-            <p className="text-sm text-gray-600 mt-1">{item.description}</p>
-          </li>
-        ))}
-      </ul>
+      <h2 className="text-2xl font-semibold mb-4 text-center">{title}</h2>
+      <div className="relative flex items-center justify-center">
+        <button
+          onClick={prev}
+          className="absolute left-0 p-2 text-3xl select-none"
+          aria-label="Previous"
+        >
+          &#10094;
+        </button>
+        <ResultCard item={item} />
+        <button
+          onClick={next}
+          className="absolute right-0 p-2 text-3xl select-none"
+          aria-label="Next"
+        >
+          &#10095;
+        </button>
+      </div>
     </section>
   );
 }
