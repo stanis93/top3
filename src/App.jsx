@@ -39,13 +39,29 @@ function App() {
     <div className="min-h-screen bg-gray-100 p-8">
       <header className="text-center mb-8">
         <h1 className="text-4xl font-bold mb-4">Choose Local Over Tourist Traps</h1>
-        <input
-          type="text"
-          placeholder="Search for a city..."
-          value={query}
-          onChange={e => setQuery(e.target.value)}
-          className="w-full max-w-md px-4 py-2 border rounded shadow"
-        />
+        <div className="relative mx-auto w-full max-w-xl">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1116.65 16.65z"
+            />
+          </svg>
+          <input
+            type="text"
+            placeholder="Search for a city..."
+            value={query}
+            onChange={e => setQuery(e.target.value)}
+            className="w-full px-4 py-3 pl-10 border-2 border-gray-300 rounded-full shadow focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all duration-300"
+          />
+        </div>
       </header>
 
       <main className="max-w-4xl mx-auto">
